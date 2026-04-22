@@ -1,44 +1,7 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<title>Quiz Histoire</title>
-
-<style>
-body {
-  font-family: Arial;
-  text-align: center;
-  background: #f2f2f2;
-}
-
-.box {
-  background: white;
-  width: 420px;
-  margin: 50px auto;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-button {
-  display: block;
-  margin: 10px auto;
-  padding: 10px;
-  width: 90%;
-  cursor: pointer;
-}
-</style>
-
-</head>
-<body>
-
-<div class="box">
-  <h4 id="level"></h4>
-  <h2 id="question"></h2>
-  <div id="answers"></div>
-  <button onclick="nextQuestion()">Question suivante</button>
-</div>
-
 <script>
+
+const goodSound = new Audio("correct.mp3");
+const badSound = new Audio("wrong.mp3");
 
 const quiz = [
   // 🔵 Niveau 1
@@ -50,7 +13,7 @@ const quiz = [
   },
   {
     level: 1,
-    question: "Surnommée « la pucelle d’Orléans », quelle jeune femme affirme avoir reçu une mission divine et aide Charles VII à reconquérir le trône de France ?",
+    question: "Surnommée « la pucelle d’Orléans », quelle jeune femme aide Charles VII à reconquérir le trône ?",
     answers: ["Jeanne d'Arc", "Aliénor d'Aquitaine", "Blanche de Castille"],
     correct: 0
   },
@@ -58,13 +21,13 @@ const quiz = [
   // 🟢 Niveau 2
   {
     level: 2,
-    question: "Quelle dynastie royale est au pouvoir en France pendant la majeure partie de la guerre de Cent Ans ?",
+    question: "Quelle dynastie royale est au pouvoir en France pendant la guerre de Cent Ans ?",
     answers: ["Valois", "Bourbon", "Capétiens directs"],
     correct: 0
   },
   {
     level: 2,
-    question: "Prénommé Bertrand, quel noble breton, futur connétable de France, fut un des principaux soutiens militaires de Charles V ?",
+    question: "Prénommé Bertrand, quel noble breton, futur connétable, fut un solide appui de Charles V ?",
     answers: ["Bertrand du Guesclin", "Bertrand de Goth", "Bertrand Russell"],
     correct: 0
   },
@@ -78,7 +41,7 @@ const quiz = [
   },
   {
     level: 3,
-    question: "Quel roi de France est fait prisonnier par les Anglais lors de la bataille de Poitiers en 1356 ?",
+    question: "Quel roi est fait prisonnier par les Anglais lors de la bataille de Poitiers en 1356 ?",
     answers: ["Jean II le Bon", "Charles V", "Philippe VI"],
     correct: 0
   },
@@ -86,13 +49,13 @@ const quiz = [
   // 🔴 Niveau 4
   {
     level: 4,
-    question: "Quelle bataille ayant eu lieu le 17 juillet 1453 est traditionnellement considérée comme la dernière de la guerre de Cent Ans ?",
+    question: "Quelle bataille ayant eu lieu le 17 juillet 1453 est traditionnellement considérée comme la dernière du conflit ?",
     answers: ["Castillon", "Azincourt", "Bouvines"],
     correct: 0
   },
   {
     level: 4,
-    question: "En quelle année Charles VII est-il officiellement sacré roi de France à Reims ?",
+    question: "En quelle année Charles VII est-il sacré roi à Reims ?",
     answers: ["1429", "1431", "1453"],
     correct: 0
   }
@@ -123,8 +86,12 @@ function loadQuestion() {
       if (i === q.correct) {
         score++;
         btn.style.background = "lightgreen";
+        goodSound.currentTime = 0;
+        goodSound.play();
       } else {
         btn.style.background = "salmon";
+        badSound.currentTime = 0;
+        badSound.play();
       }
     };
 
@@ -146,7 +113,7 @@ function nextQuestion() {
     document.body.innerHTML = `
       <div class="box">
         <h1>🎮 Quiz terminé</h1>
-        <h2>Score final : ${score}/${quiz.length}</h2>
+        <h2>Score : ${score}/${quiz.length}</h2>
         <button onclick="location.reload()">Rejouer</button>
       </div>
     `;
@@ -156,6 +123,3 @@ function nextQuestion() {
 loadQuestion();
 
 </script>
-
-</body>
-</html>
