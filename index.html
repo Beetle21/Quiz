@@ -1,57 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Quiz Histoire</title>
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #f2f2f2;
+}
+
+.box {
+  background: white;
+  width: 380px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+button {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  width: 85%;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h4 id="level"></h4>
+  <h2 id="question"></h2>
+  <div id="answers"></div>
+  <button onclick="nextQuestion()">Suivant</button>
+</div>
+
+<script>
 const quiz = [
-  // 🔵 Niveau 1
-  {
-    level: 1,
-    question: "Quel pays est opposé à la France ?",
-    answers: ["Angleterre", "Espagne", "Italie"],
-    correct: 0
-  },
-  {
-    level: 1,
-    question: "Surnommée « la pucelle d’Orléans », quelle jeune femme aide Charles VII à reconquérir le trône ?",
-    answers: ["Jeanne d'Arc", "Marie-Antoinette", "Aliénor d'Aquitaine"],
-    correct: 0
-  },
+  // Niveau 1
+  { level: 1, question: "Quel pays est opposé à la France ?", answers: ["Angleterre","Espagne","Italie"], correct: 0 },
+  { level: 1, question: "Surnommée la pucelle d’Orléans ?", answers: ["Jeanne d'Arc","Marie Curie","Aliénor"], correct: 0 },
 
-  // 🟢 Niveau 2
-  {
-    level: 2,
-    question: "Quelle dynastie royale est au pouvoir en France durant ce conflit ?",
-    answers: ["Valois", "Bourbon", "Capétiens directs"],
-    correct: 0
-  },
-  {
-    level: 2,
-    question: "Prénommé Bertrand, quel noble breton, futur connétable, fut un solide appui de Charles V ?",
-    answers: ["Bertrand du Guesclin", "Bertrand de Goth", "Bertrand Russell"],
-    correct: 0
-  },
+  // Niveau 2
+  { level: 2, question: "Dynastie en France pendant la guerre ?", answers: ["Valois","Bourbon","Capétiens"], correct: 0 },
+  { level: 2, question: "Bertrand, connétable de Charles V ?", answers: ["du Guesclin","de Goth","Russell"], correct: 0 },
 
-  // 🟡 Niveau 3
-  {
-    level: 3,
-    question: "Quelle dynastie royale est au pouvoir en Angleterre au début du conflit ?",
-    answers: ["Plantagenêt", "Tudor", "Lancaster uniquement"],
-    correct: 0
-  },
-  {
-    level: 3,
-    question: "Quel roi est fait prisonnier par les Anglais lors de la bataille de Poitiers en 1356 ?",
-    answers: ["Jean II le Bon", "Charles V", "Philippe VI"],
-    correct: 0
-  },
+  // Niveau 3
+  { level: 3, question: "Dynastie en Angleterre ?", answers: ["Plantagenêt","Tudor","Stuart"], correct: 0 },
+  { level: 3, question: "Roi capturé à Poitiers (1356) ?", answers: ["Jean II","Charles V","Philippe VI"], correct: 0 },
 
-  // 🔴 Niveau 4
-  {
-    level: 4,
-    question: "Quelle bataille ayant eu lieu le 17 juillet 1453 est traditionnellement considérée comme la dernière du conflit ?",
-    answers: ["Castillon", "Azincourt", "Bouvines"],
-    correct: 0
-  },
-  {
-    level: 4,
-    question: "En quelle année Charles VII est-il sacré roi à Reims ?",
-    answers: ["1429", "1431", "1453"],
-    correct: 0
-  }
+  // Niveau 4
+  { level: 4, question: "Dernière bataille (1453) ?", answers: ["Castillon","Azincourt","Bouvines"], correct: 0 },
+  { level: 4, question: "Sacre de Charles VII ?", answers: ["1429","1431","1453"], correct: 0 }
 ];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+function loadQuestion() {
+  answered = false;
+
+  const q = quiz[current];
+  document.getElementById("level").innerText = "Niveau " + q.level;
+  document.getElementById("question").innerText = q.question;
+
+  const div = document.getElementById("answers");
+  div.innerHTML = "";
+
+  q.answers.forEach((a, i) => {
+    const btn = document.createElement("button");
+    btn.innerText = a;
+
+    btn.onclick = () => {
+      if (answered) return;
+      answered = true;
+
+      if (i === q.correct) {
+        score++;
+        btn.style.background = "lightgreen";
+      } else {
+        btn.style.background = "salmon";
+      }
+    };
+
+    div.appendChild(btn);
+  });
+}
+
+function nextQuestion() {
+  if (!answered) {
+    alert("Réponds d'abord !");
+    return;
+  }
+
+  current++;
+
+  if (current < quiz.length) {
+    loadQuestion();
+  } else {
+    document.body.innerHTML = `
+      <div class="box">
+        <h1>🎮 Quiz terminé</h1>
+        <h2>Score : ${score}/${quiz.length}</h2>
+        <button onclick="location.reload()">Rejouer</button>
+      </div>
+    `;
+  }
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
