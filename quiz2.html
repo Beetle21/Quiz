@@ -2,61 +2,53 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Quiz 2 - Histoire (Upgrade)</title>
+<title>Quiz 2 - Guerre de Cent Ans</title>
 
 <style>
 body {
   font-family: Arial;
   text-align: center;
-  background: #e9ecef;
+  background: #f2f2f2;
 }
 
 .box {
   background: white;
   width: 450px;
   margin: 50px auto;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-h2 {
-  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 10px;
 }
 
 button {
   display: block;
   margin: 10px auto;
-  padding: 12px;
+  padding: 10px;
   width: 90%;
   cursor: pointer;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 6px;
 }
 
-.answer-btn {
-  background: #f1f3f5;
+.answer {
+  background: #eee;
 }
 
-.answer-btn:hover {
-  background: #dee2e6;
+.answer:hover {
+  background: #ddd;
 }
 
 .correct {
-  background: #4caf50 !important;
-  color: white;
+  background: lightgreen !important;
 }
 
 .wrong {
-  background: #e74c3c !important;
-  color: white;
+  background: salmon !important;
 }
 
 #nextBtn {
+  display: none;
   background: #007bff;
   color: white;
-  display: none;
 }
 
 #score {
@@ -66,7 +58,6 @@ button {
 </style>
 
 </head>
-
 <body>
 
 <div class="box">
@@ -85,7 +76,6 @@ let current = 0;
 let score = 0;
 let answered = false;
 
-// 🔊 sons simples
 let audioCtx;
 
 function initAudio() {
@@ -100,7 +90,7 @@ function goodSound() {
   const gain = audioCtx.createGain();
 
   osc.type = "sine";
-  osc.frequency.setValueAtTime(900, audioCtx.currentTime);
+  osc.frequency.setValueAtTime(800, audioCtx.currentTime);
 
   gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
@@ -130,7 +120,7 @@ function badSound() {
   osc.stop(audioCtx.currentTime + 0.25);
 }
 
-// 🎲 shuffle réponses
+// 🎲 mélange des réponses
 function shuffle(array) {
   return array
     .map(v => ({ v, sort: Math.random() }))
@@ -138,7 +128,7 @@ function shuffle(array) {
     .map(({v}) => v);
 }
 
-// 🎮 QUIZ 2 (tes questions)
+// 🎮 QUIZ 2 (TES QUESTIONS)
 const quiz = [
   {
     level: 1,
@@ -160,19 +150,19 @@ const quiz = [
   },
   {
     level: 2,
-    question: "Quel noble breton, futur connétable, soutient Charles V ?",
+    question: "Prénommé Bertrand, quel noble breton fut connétable de France ?",
     answers: ["Bertrand du Guesclin", "Bertrand de Goth", "Bertrand Russell"],
     correctAnswer: "Bertrand du Guesclin"
   },
   {
     level: 3,
-    question: "Dynastie anglaise au début de la guerre de Cent Ans ?",
+    question: "Quelle dynastie est au pouvoir en Angleterre au début de la guerre de Cent Ans ?",
     answers: ["Plantagenêt", "Tudor", "Stuart"],
     correctAnswer: "Plantagenêt"
   },
   {
     level: 3,
-    question: "Quel roi est fait prisonnier à Poitiers (1356) ?",
+    question: "Quel roi est capturé à Poitiers en 1356 ?",
     answers: ["Jean II le Bon", "Charles V", "Philippe VI"],
     correctAnswer: "Jean II le Bon"
   },
@@ -184,7 +174,7 @@ const quiz = [
   },
   {
     level: 4,
-    question: "Année du sacre de Charles VII ?",
+    question: "En quelle année Charles VII est-il sacré roi ?",
     answers: ["1429", "1431", "1453"],
     correctAnswer: "1429"
   }
@@ -207,13 +197,13 @@ function loadQuestion() {
   shuffled.forEach(a => {
     const btn = document.createElement("button");
     btn.innerText = a;
-    btn.classList.add("answer-btn");
+    btn.classList.add("answer");
 
     btn.onclick = () => {
       if (answered) return;
       answered = true;
 
-      document.querySelectorAll(".answer-btn").forEach(b => b.disabled = true);
+      document.querySelectorAll(".answer").forEach(b => b.disabled = true);
 
       if (a === q.correctAnswer) {
         btn.classList.add("correct");
