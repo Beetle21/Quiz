@@ -1,138 +1,56 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<title>Quiz Histoire</title>
+let audioCtx;
 
-<style>
-body {
-  font-family: Arial;
-  text-align: center;
-  background: #f2f2f2;
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
 }
 
-.box {
-  background: white;
-  width: 420px;
-  margin: 50px auto;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-button {
-  display: block;
-  margin: 10px auto;
-  padding: 10px;
-  width: 90%;
-}
-</style>
-
-</head>
-<body>
-
-<div class="box">
-  <h4 id="level"></h4>
-  <h2 id="question"></h2>
-  <div id="answers"></div>
-  <button onclick="nextQuestion()">Suivant</button>
-</div>
-
-<script>
-
+// 🔔 Bonne réponse (ding propre, montant, très "quiz app")
 function goodSound() {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  const osc = ctx.createOscillator();
-  osc.type = "sine";
-  osc.frequency.value = 800;
-  osc.connect(ctx.destination);
-  osc.start();
-  setTimeout(() => osc.stop(), 150);
+  initAudio();
+
+  const osc1 = audioCtx.createOscillator();
+  const osc2 = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc1.type = "sine";
+  osc2.type = "sine";
+
+  osc1.frequency.setValueAtTime(800, audioCtx.currentTime);
+  osc2.frequency.setValueAtTime(1200, audioCtx.currentTime);
+
+  gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+
+  osc1.connect(gain);
+  osc2.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  osc1.start();
+  osc2.start();
+
+  osc1.stop(audioCtx.currentTime + 0.2);
+  osc2.stop(audioCtx.currentTime + 0.2);
 }
 
+// ❌ Mauvaise réponse (buzz court, doux, pas agressif)
 function badSound() {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  const osc = ctx.createOscillator();
-  osc.type = "square";
-  osc.frequency.value = 200;
-  osc.connect(ctx.destination);
+  initAudio();
+
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = "triangle";
+  osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(180, audioCtx.currentTime + 0.25);
+
+  gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
   osc.start();
-  setTimeout(() => osc.stop(), 200);
+  osc.stop(audioCtx.currentTime + 0.25);
 }
-
-const quiz = [
-  { level: 1, question: "Quel pays est opposé à la France ?", answers: ["Angleterre","Espagne","Italie"], correct: 0 },
-  { level: 1, question: "Jeanne d’Arc aide qui ?", answers: ["Charles VII","Louis XIV","Napoléon"], correct: 0 },
-
-  { level: 2, question: "Dynastie en France ?", answers: ["Valois","Bourbon","Capétiens"], correct: 0 },
-  { level: 2, question: "Bertrand du Guesclin ?", answers: ["oui","non","peut-être"], correct: 0 },
-
-  { level: 3, question: "Dynastie anglaise ?", answers: ["Plantagenêt","Tudor","Stuart"], correct: 0 },
-  { level: 3, question: "Roi capturé Poitiers ?", answers: ["Jean II","Charles V","Philippe VI"], correct: 0 },
-
-  { level: 4, question: "Dernière bataille ?", answers: ["Castillon","Azincourt","Bouvines"], correct: 0 },
-  { level: 4, question: "Sacre de Charles VII ?", answers: ["1429","1431","1453"], correct: 0 }
-];
-
-let current = 0;
-let score = 0;
-let answered = false;
-
-function loadQuestion() {
-  answered = false;
-
-  const q = quiz[current];
-  document.getElementById("level").innerText = "Niveau " + q.level;
-  document.getElementById("question").innerText = q.question;
-
-  const div = document.getElementById("answers");
-  div.innerHTML = "";
-
-  q.answers.forEach((a, i) => {
-    const btn = document.createElement("button");
-    btn.innerText = a;
-
-    btn.onclick = () => {
-      if (answered) return;
-      answered = true;
-
-      if (i === q.correct) {
-        score++;
-        btn.style.background = "lightgreen";
-        goodSound();
-      } else {
-        btn.style.background = "salmon";
-        badSound();
-      }
-    };
-
-    div.appendChild(btn);
-  });
-}
-
-function nextQuestion() {
-  if (!answered) {
-    alert("Réponds d'abord !");
-    return;
-  }
-
-  current++;
-
-  if (current < quiz.length) {
-    loadQuestion();
-  } else {
-    document.body.innerHTML = `
-      <div class="box">
-        <h1>🎮 Quiz terminé</h1>
-        <h2>Score : ${score}/${quiz.length}</h2>
-        <button onclick="location.reload()">Rejouer</button>
-      </div>
-    `;
-  }
-}
-
-loadQuestion();
-
-</script>
-
-</body>
-</html>
