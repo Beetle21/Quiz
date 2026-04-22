@@ -1,3 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Quiz</title>
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #f4f4f4;
+}
+
+.box {
+  background: white;
+  width: 320px;
+  margin: 60px auto;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+button {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  width: 80%;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h2 id="question"></h2>
+  <div id="answers"></div>
+</div>
+
 <script>
 const quiz = [
   {
@@ -19,55 +54,57 @@ const quiz = [
 
 let current = 0;
 let score = 0;
-let answered = false;
+let locked = false;
 
-function loadQuestion() {
-  answered = false;
+function load() {
+  locked = false;
 
   const q = quiz[current];
   document.getElementById("question").innerText = q.question;
 
-  const answersDiv = document.getElementById("answers");
-  answersDiv.innerHTML = "";
+  const div = document.getElementById("answers");
+  div.innerHTML = "";
 
   q.answers.forEach((a, i) => {
     const btn = document.createElement("button");
     btn.innerText = a;
 
     btn.onclick = () => {
-      if (answered) return;
-      answered = true;
+      if (locked) return;
+      locked = true;
 
       if (i === q.correct) {
         score++;
-        btn.style.backgroundColor = "lightgreen";
+        btn.style.background = "lightgreen";
       } else {
-        btn.style.backgroundColor = "salmon";
+        btn.style.background = "salmon";
       }
+
+      setTimeout(next, 800);
     };
 
-    answersDiv.appendChild(btn);
+    div.appendChild(btn);
   });
 }
 
-function nextQuestion() {
-  if (!answered) {
-    alert("Choisis une réponse avant de continuer !");
-    return;
-  }
-
+function next() {
   current++;
 
   if (current < quiz.length) {
-    loadQuestion();
+    load();
   } else {
     document.body.innerHTML = `
-      <h1>Quiz terminé</h1>
-      <h2>Score : ${score}/${quiz.length}</h2>
-      <button onclick="location.reload()">Recommencer</button>
+      <div class="box">
+        <h1>Quiz terminé</h1>
+        <h2>Score : ${score}/${quiz.length}</h2>
+        <button onclick="location.reload()">Recommencer</button>
+      </div>
     `;
   }
 }
 
-loadQuestion();
+load();
 </script>
+
+</body>
+</html>
