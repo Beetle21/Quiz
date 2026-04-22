@@ -48,7 +48,7 @@ function initAudio() {
   }
 }
 
-// 🔔 Bonne réponse (ding type quiz moderne)
+// 🔔 Bonne réponse
 function goodSound() {
   initAudio();
 
@@ -76,7 +76,7 @@ function goodSound() {
   osc2.stop(audioCtx.currentTime + 0.2);
 }
 
-// ❌ Mauvaise réponse (buzz doux)
+// ❌ Mauvaise réponse
 function badSound() {
   initAudio();
 
@@ -97,61 +97,62 @@ function badSound() {
   osc.stop(audioCtx.currentTime + 0.25);
 }
 
+// 🎲 Mélange des réponses
+function shuffle(array) {
+  return array
+    .map(value => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+}
+
 const quiz = [
-  // 🔵 Niveau 1
   {
     level: 1,
     question: "Quel pays est opposé à la France durant la guerre de Cent Ans ?",
     answers: ["Angleterre", "Espagne", "Saint-Empire romain germanique"],
-    correct: 0
+    correctAnswer: "Angleterre"
   },
   {
     level: 1,
-    question: "Surnommée « la pucelle d’Orléans », quelle jeune femme aide Charles VII à reconquérir le trône ?",
+    question: "Surnommée « la pucelle d’Orléans », quelle jeune femme aide Charles VII ?",
     answers: ["Jeanne d'Arc", "Aliénor d'Aquitaine", "Blanche de Castille"],
-    correct: 0
+    correctAnswer: "Jeanne d'Arc"
   },
-
-  // 🟢 Niveau 2
   {
     level: 2,
     question: "Quelle dynastie royale est au pouvoir en France durant ce conflit ?",
     answers: ["Valois", "Bourbon", "Capétiens directs"],
-    correct: 0
+    correctAnswer: "Valois"
   },
   {
     level: 2,
-    question: "Prénommé Bertrand, quel noble breton, futur connétable, fut un solide appui de Charles V ?",
+    question: "Prénommé Bertrand, quel noble breton fut connétable de France ?",
     answers: ["Bertrand du Guesclin", "Bertrand de Goth", "Bertrand Russell"],
-    correct: 0
+    correctAnswer: "Bertrand du Guesclin"
   },
-
-  // 🟡 Niveau 3
   {
     level: 3,
-    question: "Quelle dynastie royale est au pouvoir en Angleterre au début de la guerre de Cent Ans ?",
+    question: "Quelle dynastie est au pouvoir en Angleterre au début de la guerre de Cent Ans ?",
     answers: ["Plantagenêt", "Tudor", "Stuart"],
-    correct: 0
+    correctAnswer: "Plantagenêt"
   },
   {
     level: 3,
-    question: "Quel roi est fait prisonnier par les Anglais lors de la bataille de Poitiers en 1356 ?",
+    question: "Quel roi est capturé à Poitiers en 1356 ?",
     answers: ["Jean II le Bon", "Charles V", "Philippe VI"],
-    correct: 0
+    correctAnswer: "Jean II le Bon"
   },
-
-  // 🔴 Niveau 4
   {
     level: 4,
-    question: "Quelle bataille ayant eu lieu le 17 juillet 1453 est traditionnellement considérée comme la dernière du conflit ?",
+    question: "Dernière bataille du conflit (1453) ?",
     answers: ["Castillon", "Azincourt", "Bouvines"],
-    correct: 0
+    correctAnswer: "Castillon"
   },
   {
     level: 4,
-    question: "En quelle année Charles VII est-il sacré roi à Reims ?",
+    question: "En quelle année Charles VII est-il sacré ?",
     answers: ["1429", "1431", "1453"],
-    correct: 0
+    correctAnswer: "1429"
   }
 ];
 
@@ -169,7 +170,9 @@ function loadQuestion() {
   const div = document.getElementById("answers");
   div.innerHTML = "";
 
-  q.answers.forEach((a, i) => {
+  const shuffled = shuffle(q.answers);
+
+  shuffled.forEach((a) => {
     const btn = document.createElement("button");
     btn.innerText = a;
 
@@ -177,7 +180,7 @@ function loadQuestion() {
       if (answered) return;
       answered = true;
 
-      if (i === q.correct) {
+      if (a === q.correctAnswer) {
         score++;
         btn.style.background = "lightgreen";
         goodSound();
