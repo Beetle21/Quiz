@@ -31,6 +31,7 @@ button {
 <div class="box">
   <h2 id="question"></h2>
   <div id="answers"></div>
+  <button onclick="nextQuestion()">Suivant</button>
 </div>
 
 <script>
@@ -54,44 +55,47 @@ const quiz = [
 
 let current = 0;
 let score = 0;
-let locked = false;
+let answered = false;
 
-function load() {
-  locked = false;
+function loadQuestion() {
+  answered = false;
 
   const q = quiz[current];
   document.getElementById("question").innerText = q.question;
 
-  const div = document.getElementById("answers");
-  div.innerHTML = "";
+  const answersDiv = document.getElementById("answers");
+  answersDiv.innerHTML = "";
 
   q.answers.forEach((a, i) => {
     const btn = document.createElement("button");
     btn.innerText = a;
 
     btn.onclick = () => {
-      if (locked) return;
-      locked = true;
+      if (answered) return;
+      answered = true;
 
       if (i === q.correct) {
         score++;
-        btn.style.background = "lightgreen";
+        btn.style.backgroundColor = "lightgreen";
       } else {
-        btn.style.background = "salmon";
+        btn.style.backgroundColor = "salmon";
       }
-
-      setTimeout(next, 800);
     };
 
-    div.appendChild(btn);
+    answersDiv.appendChild(btn);
   });
 }
 
-function next() {
+function nextQuestion() {
+  if (!answered) {
+    alert("Choisis une réponse avant !");
+    return;
+  }
+
   current++;
 
   if (current < quiz.length) {
-    load();
+    loadQuestion();
   } else {
     document.body.innerHTML = `
       <div class="box">
@@ -103,7 +107,7 @@ function next() {
   }
 }
 
-load();
+loadQuestion();
 </script>
 
 </body>
