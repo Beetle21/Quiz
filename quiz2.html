@@ -1,81 +1,9 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<title>Quiz 2 - Guerre de Cent Ans</title>
-
-<style>
-body {
-  font-family: Arial;
-  text-align: center;
-  background: #f2f2f2;
-}
-
-.box {
-  background: white;
-  width: 450px;
-  margin: 50px auto;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-button {
-  display: block;
-  margin: 10px auto;
-  padding: 10px;
-  width: 90%;
-  cursor: pointer;
-  border: none;
-  border-radius: 6px;
-}
-
-.answer {
-  background: #eee;
-}
-
-.answer:hover {
-  background: #ddd;
-}
-
-.correct {
-  background: lightgreen !important;
-}
-
-.wrong {
-  background: salmon !important;
-}
-
-#nextBtn {
-  display: none;
-  background: #007bff;
-  color: white;
-}
-
-#score {
-  margin-top: 10px;
-  font-weight: bold;
-}
-</style>
-
-</head>
-
-<body>
-
-<div class="box">
-  <h4 id="level"></h4>
-  <h2 id="question"></h2>
-  <div id="answers"></div>
-
-  <button id="nextBtn" onclick="nextQuestion()">Suivant</button>
-
-  <div id="score">Score : 0</div>
-</div>
-
 <script>
 
 let current = 0;
 let score = 0;
 let answered = false;
+let order = [];
 
 let audioCtx;
 
@@ -121,7 +49,7 @@ function badSound() {
   osc.stop(audioCtx.currentTime + 0.25);
 }
 
-// 🎲 shuffle réponses
+// 🔀 mélange des réponses
 function shuffle(array) {
   return array
     .map(v => ({ v, sort: Math.random() }))
@@ -129,7 +57,7 @@ function shuffle(array) {
     .map(({v}) => v);
 }
 
-// 🎮 QUIZ 2 (TES QUESTIONS)
+// 🎮 QUIZ
 const quiz = [
   {
     level: 1,
@@ -151,13 +79,13 @@ const quiz = [
   },
   {
     level: 2,
-    question: "Prénommé Bertrand, quel noble breton fut connétable de France ?",
-    answers: ["Bertrand du Guesclin", "Bertrand de Goth", "Bertrand Russell"],
-    correctAnswer: "Bertrand du Guesclin"
+    question: "Bertrand du Guesclin était :",
+    answers: ["Connétable", "Roi", "Pape"],
+    correctAnswer: "Connétable"
   },
   {
     level: 3,
-    question: "Quelle dynastie est au pouvoir en Angleterre au début de la guerre de Cent Ans ?",
+    question: "Dynastie anglaise au début de la guerre de Cent Ans ?",
     answers: ["Plantagenêt", "Tudor", "Stuart"],
     correctAnswer: "Plantagenêt"
   },
@@ -169,23 +97,29 @@ const quiz = [
   },
   {
     level: 4,
-    question: "Dernière bataille de la guerre de Cent Ans (1453) ?",
+    question: "Dernière bataille de la guerre de Cent Ans ?",
     answers: ["Castillon", "Azincourt", "Bouvines"],
     correctAnswer: "Castillon"
   },
   {
     level: 4,
-    question: "En quelle année Charles VII est-il sacré roi ?",
+    question: "Sacre de Charles VII ?",
     answers: ["1429", "1431", "1453"],
     correctAnswer: "1429"
   }
 ];
 
+// 🔀 mélange questions
+function initOrder() {
+  order = [...Array(quiz.length).keys()];
+  order.sort(() => Math.random() - 0.5);
+}
+
 function loadQuestion() {
   answered = false;
   document.getElementById("nextBtn").style.display = "none";
 
-  const q = quiz[current];
+  const q = quiz[order[current]];
 
   document.getElementById("level").innerText = "Niveau " + q.level;
   document.getElementById("question").innerText = q.question;
@@ -229,17 +163,26 @@ function nextQuestion() {
   if (current < quiz.length) {
     loadQuestion();
   } else {
+    let message = "";
+
+    if (score === quiz.length) {
+      message = "🏆 Parfait ! Tu maîtrises la guerre de Cent Ans";
+    } else if (score >= quiz.length / 2) {
+      message = "👍 Pas mal ! Tu connais l’essentiel";
+    } else {
+      message = "📚 À revoir un peu !";
+    }
+
     document.querySelector(".box").innerHTML = `
       <h1>🎮 Quiz terminé</h1>
-      <h2>Score final : ${score}/${quiz.length}</h2>
+      <h2>${message}</h2>
+      <h2>Score : ${score}/${quiz.length}</h2>
       <button onclick="location.reload()">Rejouer</button>
     `;
   }
 }
 
+initOrder();
 loadQuestion();
 
 </script>
-
-</body>
-</html>
