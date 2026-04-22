@@ -58,6 +58,7 @@ button {
 </style>
 
 </head>
+
 <body>
 
 <div class="box">
@@ -120,7 +121,7 @@ function badSound() {
   osc.stop(audioCtx.currentTime + 0.25);
 }
 
-// 🎲 mélange des réponses
+// 🎲 shuffle réponses
 function shuffle(array) {
   return array
     .map(v => ({ v, sort: Math.random() }))
